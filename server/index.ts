@@ -9,6 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // In-memory store to hold contact data
+// Optional idea: store the contact data in a dictionary with ID as key?
 let contacts: Array<{
   id: number;
   firstName: string;
@@ -16,7 +17,6 @@ let contacts: Array<{
   phone: string;
   email: string;
 }> = [];
-// let id = 1;
 
 // Fetch all contacts
 app.get("/api/contacts", (req, res) => {
@@ -30,8 +30,6 @@ app.post("/api/contacts", (req, res) => {
     id: Math.floor(Math.random() * 1000000),
     ...newContact,
   };
-
-  //   id += 1;
   contacts.push(contactWithId);
   res.status(201).json(contactWithId);
 });
@@ -52,6 +50,7 @@ app.put("/api/contacts/:id", (req, res) => {
   const contactId = parseInt(req.params.id);
   const contactIndex = contacts.findIndex((c) => c.id === contactId);
   if (contactIndex !== -1) {
+    // Updates the relevant contact
     contacts[contactIndex] = { ...contacts[contactIndex], ...req.body };
     res.json(contacts[contactIndex]);
   } else {

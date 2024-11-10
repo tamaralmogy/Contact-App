@@ -1,85 +1,105 @@
-import React, { useState } from "react";
+import React, { FC } from "react";
 import {
   Button,
   TextField,
   Box,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
 } from "@mui/material";
 import { ContactFormProps } from "../types";
 
-const AddContactForm: React.FC<ContactFormProps> = ({
+// Functional component for adding a contact
+const AddContactForm: FC<ContactFormProps> = ({
   newContact,
   setNewContact,
   handleAddContact,
+  onClose,
 }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleAdd = () => {
-    handleAddContact();
-    handleClose();
+  const handleAdd = async () => {
+    // Validation: Ensure all fields are filled
+    if (
+      !newContact.firstName ||
+      !newContact.lastName ||
+      !newContact.phoneNumber ||
+      !newContact.email
+    ) {
+      alert("Please fill out all fields before submitting");
+      return;
+    }
+    const isSuccess = await handleAddContact(); // Wait for successful submission
+    if (isSuccess) {
+      onClose(); // Close the form if adding the contact was successful
+    }
   };
 
   return (
-    <div>
-      <Button variant="contained" onClick={handleClickOpen}>
-        Add New Contact
-      </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Contact</DialogTitle>
-        <DialogContent>
-          <Box
-            component="form"
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <TextField
-              label="First Name"
-              value={newContact.firstName}
-              onChange={(e) =>
-                setNewContact({ ...newContact, firstName: e.target.value })
-              }
-            />
-            <TextField
-              label="Last Name"
-              value={newContact.lastName}
-              onChange={(e) =>
-                setNewContact({ ...newContact, lastName: e.target.value })
-              }
-            />
-            <TextField
-              label="Phone Number"
-              value={newContact.phoneNumber}
-              onChange={(e) =>
-                setNewContact({ ...newContact, phoneNumber: e.target.value })
-              }
-            />
-            <TextField
-              label="Email"
-              value={newContact.email}
-              onChange={(e) =>
-                setNewContact({ ...newContact, email: e.target.value })
-              }
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" onClick={handleAdd}>
-            Add Contact
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    <>
+      <DialogTitle>Add New Contact</DialogTitle>
+      <DialogContent>
+        <Box
+          component="form"
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
+          <TextField
+            label="First Name"
+            fullWidth
+            required
+            margin="normal"
+            value={newContact.firstName}
+            onChange={(e) =>
+              setNewContact({ ...newContact, firstName: e.target.value })
+            }
+          />
+          <TextField
+            label="Last Name"
+            fullWidth
+            required
+            margin="normal"
+            value={newContact.lastName}
+            onChange={(e) =>
+              setNewContact({ ...newContact, lastName: e.target.value })
+            }
+          />
+          <TextField
+            label="Phone Number"
+            fullWidth
+            required
+            margin="normal"
+            value={newContact.phoneNumber}
+            onChange={(e) =>
+              setNewContact({ ...newContact, phoneNumber: e.target.value })
+            }
+          />
+          <TextField
+            label="Email"
+            fullWidth
+            required
+            margin="normal"
+            value={newContact.email}
+            onChange={(e) =>
+              setNewContact({ ...newContact, email: e.target.value })
+            }
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleAdd} color="primary" variant="contained">
+          Add Contact
+        </Button>
+        <Button
+          onClick={onClose}
+          color="secondary"
+          variant="contained"
+          style={{
+            backgroundColor: "green",
+            color: "white",
+          }}
+        >
+          Close
+        </Button>
+      </DialogActions>
+    </>
   );
 };
 
