@@ -60,8 +60,8 @@ const App: React.FC = () => {
         newContact={newContact}
         setNewContact={setNewContact}
         handleAddContact={handleAddContact}
-        setShowContacts={setShowContacts} // Pass setShowContacts to Navbar
-        dispatch={dispatch} // Pass dispatch to Navbar
+        setShowContacts={setShowContacts}
+        dispatch={dispatch}
       />
       <Container>
         <SearchContact

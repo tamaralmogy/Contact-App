@@ -50,9 +50,15 @@ app.put("/api/contacts/:id", (req, res) => {
   const contactId = parseInt(req.params.id);
   const contactIndex = contacts.findIndex((c) => c.id === contactId);
   if (contactIndex !== -1) {
-    // Updates the relevant contact
-    contacts[contactIndex] = { ...contacts[contactIndex], ...req.body };
-    res.json(contacts[contactIndex]);
+    const updatedContact = {
+      ...contacts[contactIndex],
+      firstName: req.body.firstName?.trim() || contacts[contactIndex].firstName,
+      lastName: req.body.lastName?.trim() || contacts[contactIndex].lastName,
+      phone: req.body.phone?.trim() || contacts[contactIndex].phone,
+      email: req.body.email?.trim() || contacts[contactIndex].email,
+    };
+    contacts[contactIndex] = updatedContact;
+    res.json(updatedContact);
   } else {
     res.status(404).send("Contact not found");
   }

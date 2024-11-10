@@ -1,0 +1,51 @@
+digraph ContactListAppComponents {
+  rankdir=LR;
+  node [shape=box, style=filled, color=lightblue];
+
+  App;
+  Navbar;
+  ContactList;
+  AddContactForm;
+  SearchContact;
+  EditContact;
+  DeleteContact;
+
+  // Component Connections
+  App -> Navbar;
+  App -> SearchContact;
+  App -> ContactList;
+  App -> AddContactForm;
+  App -> EditContact;
+  App -> DeleteContact;
+
+  // Navbar contains AddContactForm and can show all contacts
+  Navbar -> AddContactForm;
+  Navbar -> ContactList;
+
+  // SearchContact can display ContactList
+  SearchContact -> EditContact;
+  SearchContact -> DeleteContact;
+
+
+  // Edit and Delete actions are tied to ContactList
+  ContactList -> EditContact;
+  ContactList -> DeleteContact;
+
+  // Frontend and Backend API connections
+  subgraph cluster_API {
+    label="API";
+    style=dashed;
+    color=gray;
+    node [shape=ellipse, style=filled, color=lightyellow];
+    GetContacts;
+    AddContact;
+    UpdateContact;
+    DeleteContact;
+  }
+
+  // Frontend to API calls
+  App -> GetContacts [label="GET"];
+  AddContactForm -> AddContact [label="POST"];
+  EditContact -> UpdateContact [label="PUT"];
+  DeleteContact -> DeleteContact [label="DELETE"];
+}
