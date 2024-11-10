@@ -103,7 +103,7 @@ The server uses an in-memory store to manage the contact data for simplicity.
 - **View All Contacts**: Display all contacts in a table format.
 
 ### Future Improvements
-
+-Tests!
 - Add persistent storage using a database like PostgreSQL.
 - Add validation for input fields (e.g., phone number should be numbers only, email should contain `@`).
 - Improve UI/UX design for a more polished look.
