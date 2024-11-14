@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useReducer } from "react";
-import { addContact } from "./api";
+import {
+  addContact,
+  getContacts,
+  updateContactById,
+  deleteContactById,
+} from "./api";
 import ContactList from "./components/ContactList";
 import SearchContact from "./components/SearchContact";
 import EditContact from "./components/EditContact";
@@ -10,7 +15,12 @@ import { contactReducer } from "./reducers/contactReducer";
 import { Container, Typography } from "@mui/material";
 
 const App: React.FC = () => {
+  // The contacts state is managed by userReducer with the contactReducer function
+  // Initial state is empty array
+  // Will hold all contacts
   const [contacts, dispatch] = useReducer(contactReducer, []);
+
+  // Store the details of the new contact without the ID that will be generated later
   const [newContact, setNewContact] = useState<Omit<Contact, "id">>({
     firstName: "",
     lastName: "",
@@ -18,19 +28,64 @@ const App: React.FC = () => {
     email: "",
   });
   const [showContacts, setShowContacts] = useState(false); // Moved the control to Navbar
+  // Keep track of the contact that is currently edited
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
-  const [deletingContactId, setDeletingContactId] = useState<number | null>(
-    null
-  );
+  const [deletingContact, setDeletingContact] = useState<Contact | null>(null);
+  const [searchedContact, setSearchedContact] = useState<Contact | null>(null);
 
   const handleAddContact = async () => {
+    const response = await safelyAddContact(newContact);
+    if (response) {
+      addContactsState(response.data);
+      return true;
+    }
+    return false;
+  };
+
+  const safelyAddContact = async (contact: Omit<Contact, "id">) => {
     try {
-      const response = await addContact(newContact);
-      dispatch({ type: "ADD_CONTACT", payload: response.data });
-      return true; // Indicate success & form is cleared
+      return await addContact(contact);
     } catch (error) {
-      console.error("Failed to add contact:", error);
-      return false; // Indicate failure
+      console.error("Falied to add contact:", error);
+      return null;
+    }
+  };
+
+  const addContactsState = (contactData: Contact) => {
+    dispatch({ type: "ADD_CONTACT", payload: contactData });
+  };
+
+  const fetchContacts = async () => {
+    try {
+      const response = await getContacts();
+      dispatch({ type: "SET_CONTACTS", payload: response.data });
+      setShowContacts(true); // Control Contact List visibility
+    } catch (error) {
+      console.error("Failed to fetch contacts:", error);
+    }
+  };
+
+  const updateContactInState = (updatedContact: Contact) => {
+    dispatch({
+      type: "UPDATE_CONTACT",
+      payload: { id: updatedContact.id, updates: updatedContact },
+    });
+  };
+
+  const submitEdit = async (updatedContact: Contact) => {
+    try {
+      const response = await updateContactById(
+        updatedContact.id,
+        updatedContact
+      );
+      updateContactInState(response.data);
+      // Update the searched contact if it matches the updated contact
+      if (searchedContact && searchedContact.id === response.data.id) {
+        setSearchedContact(response.data);
+      }
+      resetEdit();
+    } catch (error) {
+      console.error("Failed to update contact");
     }
   };
 
@@ -38,35 +93,53 @@ const App: React.FC = () => {
     setEditingContact(contact);
   };
 
-  const handleDeleteContact = (id: number) => {
-    setDeletingContactId(id);
+  const handleDeleteContact = (contact: Contact) => {
+    setDeletingContact(contact);
   };
 
-  const handleContactsUpdate = (updatedContacts: Contact[]) => {
-    dispatch({ type: "SET_CONTACTS", payload: updatedContacts });
+  const removeContactFromState = async (contact: Contact) => {
+    try {
+      await deleteContactById(contact.id);
+      dispatch({ type: "DELETE_CONTACT", payload: contact });
+
+      // Clear the searched contact if it matches the deleted contact
+      if (searchedContact && searchedContact.id === contact.id) {
+        setSearchedContact(null);
+      }
+      setDeletingContact(null);
+    } catch (error) {
+      console.error("Failed to delete contact");
+    }
   };
+
+  // const handleContactsUpdate = (updatedContacts: Contact[]) => {
+  //   dispatch({ type: "SET_CONTACTS", payload: updatedContacts });
+  // };
 
   const resetEdit = () => {
     setEditingContact(null);
   };
 
   const resetDelete = () => {
-    setDeletingContactId(null);
+    setDeletingContact(null);
   };
 
   return (
     <>
       <Navbar
+        // Adding New Contacts functionality
         newContact={newContact}
         setNewContact={setNewContact}
         handleAddContact={handleAddContact}
-        setShowContacts={setShowContacts}
-        dispatch={dispatch}
+        // Showing Contacts List functionality
+        fetchContacts={fetchContacts}
       />
       <Container>
         <SearchContact
           onEdit={handleEditContact}
           onDelete={handleDeleteContact}
+          searchedContact={searchedContact}
+          setSearchedContact={setSearchedContact}
         />
         {showContacts && (
           <ContactList
@@ -79,14 +152,14 @@ const App: React.FC = () => {
         {editingContact && (
           <EditContact
             contact={editingContact}
-            onContactsUpdate={handleContactsUpdate}
+            submitEdit={submitEdit}
             onCancel={resetEdit}
           />
         )}
-        {deletingContactId !== null && (
+        {deletingContact !== null && (
           <DeleteContact
-            contactId={deletingContactId}
-            onContactsUpdate={handleContactsUpdate}
+            contact={deletingContact}
+            removeContactFromState={removeContactFromState}
             onCancel={resetDelete}
           />
         )}

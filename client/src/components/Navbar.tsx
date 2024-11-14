@@ -9,47 +9,30 @@ import {
 } from "@mui/material";
 import AddContactForm from "./AddContactForm";
 import { NavbarProps } from "../types";
-import { getContacts } from "../api"; // Import getContacts for fetching contacts
 
 // Navbar component for managing header actions and adding contacts
 const Navbar: React.FC<
   NavbarProps & {
-    setShowContacts: (show: boolean) => void;
-    dispatch: React.Dispatch<any>;
+    fetchContacts: () => void;
   }
-> = ({
-  newContact,
-  setNewContact,
-  handleAddContact,
-  setShowContacts,
-  dispatch,
-}) => {
+> = ({ newContact, setNewContact, handleAddContact, fetchContacts }) => {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showContacts, setLocalShowContacts] = useState(false); // Manage local visibility of contacts
 
   const handleOpenForm = () => {
+    // Resetting form fields
     setNewContact({
       firstName: "",
       lastName: "",
       phoneNumber: "",
       email: "",
-    }); // Resetting form fields
+    });
+    // Open the form
     setShowAddForm(true);
   };
 
   const handleShowAllContacts = () => {
-    setLocalShowContacts(true);
-    setShowContacts(true); // Let App know to show the contact list
+    fetchContacts();
   };
-
-  // useEffect to fetch contacts when "Show All Contacts" is clicked
-  useEffect(() => {
-    if (showContacts) {
-      getContacts().then((response) => {
-        dispatch({ type: "SET_CONTACTS", payload: response.data });
-      });
-    }
-  }, [showContacts, dispatch]);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "lightgrey" }}>

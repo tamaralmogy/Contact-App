@@ -12,12 +12,12 @@ export interface Update {
   updates?: Contact;
 }
 
-// Actions that can be dispatched to the reducer
-export interface Action {
-  type: "ADD_CONTACT" | "UPDATE_CONTACT" | "DELETE_CONTACT" | "SET_CONTACTS";
-  // The payload is the data needed to perform the action
-  payload: Contact | Update | Contact[];
-}
+// Each Action type has a specific payload type
+export type Action =
+  | { type: "ADD_CONTACT"; payload: Contact }
+  | { type: "UPDATE_CONTACT"; payload: Update }
+  | { type: "DELETE_CONTACT"; payload: Contact }
+  | { type: "SET_CONTACTS"; payload: Contact[] };
 
 // Common props for managing a new contact
 export type NewContactProps = {
@@ -33,6 +33,6 @@ export type ContactFormProps = NewContactProps & {
 
 // Props for the Navbar component
 export type NavbarProps = NewContactProps & {
-  setShowContacts: (show: boolean) => void; // Function to manage contact visibility
-  dispatch: React.Dispatch<any>; // Dispatch function to update the contact list
+  // setShowContacts: (show: boolean) => void; // Function to manage contact visibility
+  // dispatch: React.Dispatch<any>; // Dispatch function to update the contact list
 };

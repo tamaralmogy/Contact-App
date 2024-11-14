@@ -12,11 +12,15 @@ import {
   Box,
 } from "@mui/material";
 
+// Receives an array of contacts to display
+// A function to trigger editing of a selected contact
+// A function to delete a contact
+// A function to close the contact list
 type ContactListProps = {
   contacts: Contact[];
   onEdit: (contact: Contact) => void;
-  onDelete: (id: number) => void;
-  onClose: () => void; // New prop for closing the contact list
+  onDelete: (contact: Contact) => void;
+  onClose: () => void;
 };
 
 const ContactList: React.FC<ContactListProps> = ({
@@ -71,7 +75,7 @@ const ContactList: React.FC<ContactListProps> = ({
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={() => onDelete(contact.id)}
+                    onClick={() => onDelete(contact)}
                   >
                     Delete
                   </Button>

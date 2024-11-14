@@ -8,12 +8,8 @@ const api = axios.create({
 // Fetch all contacts
 export const getContacts = () => api.get("/contacts");
 // Add a new contact
-export const addContact = (contact: {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-}) => api.post("/contacts", contact);
+export const addContact = (contact: Omit<Contact, "id">) =>
+  api.post("/contacts", contact);
 // Get a contact by his ID
 export const getContactById = (id: number) => api.get(`/contacts/${id}`);
 // Update contact by his ID

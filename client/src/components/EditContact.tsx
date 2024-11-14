@@ -10,17 +10,17 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Contact } from "../types";
-import { updateContactById, getContacts } from "../api";
+// import { updateContactById } from "../api";
 
 type EditContactProps = {
   contact: Contact;
-  onContactsUpdate: (contacts: Contact[]) => void;
+  submitEdit: (updatedContact: Contact) => void;
   onCancel: () => void;
 };
 
 const EditContact: React.FC<EditContactProps> = ({
   contact,
-  onContactsUpdate,
+  submitEdit,
   onCancel,
 }) => {
   const [editContact, setEditContact] = useState<Partial<Contact>>(contact);
@@ -39,14 +39,7 @@ const EditContact: React.FC<EditContactProps> = ({
     }
 
     try {
-      console.log("Updating contact with ID:", contact.id);
-      const response = await updateContactById(contact.id, editContact);
-      console.log("Contact updated successfully:", response.data);
-
-      // Refresh the contact list
-      const updatedContacts = await getContacts();
-      onContactsUpdate(updatedContacts.data);
-
+      await submitEdit(editContact as Contact);
       setError(null);
       onCancel(); // Close the edit form after a successful update
     } catch (error) {
@@ -106,6 +99,7 @@ const EditContact: React.FC<EditContactProps> = ({
           Cancel
         </Button>
       </DialogActions>
+      {/* Error message can be conditionally rendered */}
       {error && (
         <Typography variant="body1" color="error" sx={{ padding: 2 }}>
           {error}

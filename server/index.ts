@@ -23,7 +23,7 @@ app.get("/api/contacts", (req, res) => {
   res.json(contacts);
 });
 
-// Create a new contact
+// Add a new contact
 app.post("/api/contacts", (req, res) => {
   const newContact = req.body;
   const contactWithId = {

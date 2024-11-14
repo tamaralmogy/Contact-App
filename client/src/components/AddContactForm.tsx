@@ -9,13 +9,15 @@ import {
 } from "@mui/material";
 import { ContactFormProps } from "../types";
 
-// Functional component for adding a contact
+// Functional component for adding a new contact
 const AddContactForm: FC<ContactFormProps> = ({
   newContact,
   setNewContact,
   handleAddContact,
   onClose,
 }) => {
+  // A function for handling the addition of a new contact
+  // Should be an async function since handles API requests
   const handleAdd = async () => {
     // Validation: Ensure all fields are filled
     if (
@@ -27,6 +29,7 @@ const AddContactForm: FC<ContactFormProps> = ({
       alert("Please fill out all fields before submitting");
       return;
     }
+    //  Sends the new contact back to App to handle API request
     const isSuccess = await handleAddContact(); // Wait for successful submission
     if (isSuccess) {
       onClose(); // Close the form if adding the contact was successful
