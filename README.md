@@ -74,11 +74,33 @@ The server uses an in-memory store to manage the contact data for simplicity.
 
 #### Running the Application
 
-1. Install dependencies:
+##### Running the Server
+
+1. Navigate to the client directory:
+   ```bash
+   cd client
+   ```
+2.  Install dependencies:
    ```bash
    npm install
    ```
-2. Start the application:
+3. Navigate to the server directory:
+   ```bash
+   cd server
+   ```
+4.  Install dependencies:
+   ```bash
+   npm install
+   ```
+5. Navigate back to root directory:
+   ```bash
+   cd ../
+   ```
+6. Install dependencies:
+   ```bash
+   npm install
+   ```
+7. Start the application:
 
    ```bash
    npm start
@@ -105,5 +127,6 @@ The server uses an in-memory store to manage the contact data for simplicity.
 ### Future Improvements
 
 - Add persistent storage using a database like PostgreSQL.
+- Tests!
 - Add validation for input fields (e.g., phone number should be numbers only, email should contain `@`).
 - Improve UI/UX design for a more polished look.
